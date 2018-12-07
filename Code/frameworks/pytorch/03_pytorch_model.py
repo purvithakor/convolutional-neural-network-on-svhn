@@ -39,7 +39,6 @@ torch.manual_seed(seed)
 
 dtype = torch.float
 
-
 if torch.cuda.is_available():
     device = torch.device("cuda:0")
 else:
@@ -74,7 +73,6 @@ print("\nData is ready!")
 
 # CNN architecture
 
-
 class CNN(nn.Module):
     def __init__(self):
         super(CNN, self).__init__()
@@ -103,117 +101,88 @@ cnn = cnn.cuda()
 
 ########################################################################################################################
 
-## Loss and Optimizer
+# Loss and Optimizer
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(cnn.parameters(), lr=learning_rate)
 
-############################################################ Training the Model
+#Training the Model
 
 cnn.train()  #to include dropouts in training
 loss_list = []
 
 for epoch in range(num_epochs):
     for batch_idx, (images, labels) in enumerate(train_loader):
-
         images = Variable(images.cuda())
         labels = Variable(labels.cuda())
-
         # reset the gradient
         optimizer.zero_grad()
-
         # forward pass
         outputs = cnn(images)
-
         # loss for this batch
         loss = criterion(outputs, labels)
         loss_list.append(loss.item())
-
         # backward
         loss.backward()
-
         # Update parameters based on backpropogation
         optimizer.step()
-
         if (batch_idx + 1) % 100 == 0:
             print('Epoch [%d/%d], Iter [%d/%d] Loss: %.4f'
                   % (epoch + 1, num_epochs, batch_idx + 1, len(train_dataset) // batch_size, loss.item()))
 
-
-# plt.figure(1)
-# plt.loglog(np.array(loss_list))
-# plt.ylabel("Loss")
-# plt.xlabel("Epochs")
-# plt.legend("Log Loss across iterations")
-# ##plt.show(block=False)
-# plt.show()
-
+plt.figure(1)
+plt.loglog(np.array(loss_list))
+plt.ylabel("Loss")
+plt.xlabel("Epochs")
+plt.legend("Log Loss across iterations")
+##plt.show(block=False)
+plt.show()
 
 ########################################################################################################################
-
-######################################################### Testing the Model
+#Testing the Model
 
 correct = 0
 total = 0
 correct_lst =[]
-
 preds = []  # empty array to store the predicted values of 126,084 images
 labs = []  # empty array to store the labels of 126,084 images
-
 cnn.eval() #to exclude dropouts in testing
 
 for images, labels in test_loader:
-
    images = images.to(device, dtype=torch.float)
-
    outputs = cnn(images)
-
    _, predicted = torch.max(outputs.data, 1)
-
    total += labels.to(device, dtype=torch.long).size(0)
-
    correct += (predicted.to(device) == labels.to(device, dtype=torch.long)).sum()
-
    correct_lst.append(correct.item() / total)
-
    for i in range(len(images)):
-
        preds.append(predicted[i])
        labs.append(labels[i])
 
-
-# # testing accuracy plot
-# plt.figure(2)
-# plt.plot(np.array(correct_lst))
-# plt.ylabel("Accuracy")
-# plt.xlabel("Iterations")
-# plt.title("Test Accuracy")
-# ##plt.show(block=False)
-# plt.show()
-# ##plt.savefig("Training_Loss_vs_Epochs.png")
-
+# testing accuracy plot
+plt.figure(2)
+plt.plot(np.array(correct_lst))
+plt.ylabel("Accuracy")
+plt.xlabel("Iterations")
+plt.title("Test Accuracy")
+##plt.show(block=False)
+plt.show()
+##plt.savefig("Training_Loss_vs_Epochs.png")
 
 print(60*"-")
 print('Test Accuracy of the model on the 126,084 test images: %d %%' % (100 * correct / total))
 print(60*"-")
 
-
 ########################################################################################################################
-
-## confusion matrix
+# confusion matrix
 cm = confusion_matrix(labs, preds)
 print("The confusion matrix is :\n " +str(cm))
 print("")
-
 print("\nThe f1 score is : %.3f" % (f1_score(labs, preds, average="macro")))
-
 print("\nThe accuracy score is : %.3f " % (accuracy_score(labs, preds, normalize=True)))
-
 print("\nThe misclassification rate is : %.3f " % (1 - (accuracy_score(labs, preds, normalize=True))))
-
 print("")
 target_names = ['label 0', 'label 1', 'label 2', 'label 3', 'label 4', 'label 5', 'label 6', 'label 7', 'label 8', 'label 9']
 print(classification_report(torch.FloatTensor(labs), torch.FloatTensor(preds), target_names=target_names))
-
 
 ########################################################################################################################
 
