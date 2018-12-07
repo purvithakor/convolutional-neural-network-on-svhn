@@ -58,7 +58,7 @@ for folder_name in folder_names:
 
 label_list = ['label_0','label_1','label_2','label_3','label_4','label_5','label_6','label_7','label_8','label_9']
 
-############################ Creating Label folders in svhn_pytorch/train
+# Creating Label folders in svhn_pytorch/train
 
 os.chdir('./svhn_pytorch/train/') # go to ./svhn_pytorch/train to create label folders
 
@@ -76,7 +76,7 @@ print("\nFolder structure for train images done.")
 
 os.chdir("..")  #goes back to svhn_pytorch folder
 
-############################ Creating Label folders in svhn_pytorch/test
+# Creating Label folders in svhn_pytorch/test
 
 os.chdir('./test/') # go to ./test to create the label folders
 
@@ -111,7 +111,7 @@ for filename in filename_list:
 
 ########################################################################################################################
 
-################################## Load TRAIN DATA from instance to svhn_pytorch folder on your cloud
+#Load TRAIN DATA from instance to svhn_pytorch folder on your cloud
 
 train_processed = loadmat('./train_processed.mat')
 # train_processed is a dictionary of length 5, we are only interested in x_train and y_train
@@ -127,7 +127,7 @@ print("\nProcessed train files loaded!")
 del(train_processed)
 ########################################################################################################################
 
-################################## Load TEST DATA from instance to current environment
+#Load TEST DATA from instance to current environment
 
 test_processed = loadmat('./test_processed.mat')
 # test_processed is a dictionary of length 5, we are only interested in x_test and y_test
@@ -145,7 +145,7 @@ del(test_processed)
 ##We need to convert the .mat files to images  and segregate the images in their appropriate label folder (to be used
 ##in DataLoader)
 
-################################# CONVERTING TEST MAT TO IMAGES
+#CONVERTING TEST MAT TO IMAGES
 txt_test_file = open("./test.txt", "w") # creating a text file just for reference
 
 tot_test_img = len(x_test_mat[1,1,1,:])
@@ -159,7 +159,7 @@ txt_test_file.close()
 
 print("\nTest images segregated!")
 
-################################# CONVERTING TRAIN MAT TO IMAGES
+#CONVERTING TRAIN MAT TO IMAGES
 txt_train_file = open("./train.txt", "w")
 
 tot_train_img = len(x_train_mat[1,1,1,:])
