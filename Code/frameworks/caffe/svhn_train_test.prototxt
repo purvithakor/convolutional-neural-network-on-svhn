@@ -9,8 +9,11 @@ layer {
   }
   data_param {
     source: "train_lmdb_db"
-    batch_size: 60
+    batch_size: 4500
     backend: LMDB
+  }
+  transform_param {
+  mean_file: "mean_train_image.binaryproto"
   }
 }
 layer {
@@ -23,8 +26,11 @@ layer {
   }
   data_param {
     source: "test_lmdb_db"
-    batch_size: 100
+    batch_size: 1000
     backend: LMDB
+  }
+  transform_param {
+  mean_file: "mean_train_image.binaryproto"
   }
 }
 layer {
@@ -32,12 +38,6 @@ layer {
   type: "Convolution"
   bottom: "data"
   top: "conv1"
-  param {
-    lr_mult: 1
-  }
-  param {
-    lr_mult: 2
-  }
   convolution_param {
     num_output: 20
     kernel_size: 5
@@ -60,18 +60,12 @@ layer {
     kernel_size: 2
     stride: 2
   }
-}
+ }
 layer {
   name: "conv2"
   type: "Convolution"
   bottom: "pool1"
   top: "conv2"
-  param {
-    lr_mult: 1
-  }
-  param {
-    lr_mult: 2
-  }
   convolution_param {
     num_output: 50
     kernel_size: 5
