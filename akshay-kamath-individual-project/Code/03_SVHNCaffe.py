@@ -1,6 +1,5 @@
 import warnings
 warnings.filterwarnings("ignore")
-
 import os
 import caffe
 import matplotlib.pyplot as plt
@@ -10,6 +9,9 @@ import pickle
 import wget
 import sys
 sys.tracebacklimit = 0
+import time
+
+start_time_cos = time.time()
 
 np.random.seed(42)
 # ##########################IMPORTING DATA FROM BUCKET TO INSTANCE
@@ -56,9 +58,9 @@ print('\n' + '*' * 10 + 'Downloading Done' + '*' * 10 + '\n\n')
 #print os.getcwd()  # /home/ubuntu/Deep-Learning/DL_Project/svhn_data
 caffe.set_mode_gpu()
 
-solver = caffe.SGDSolver('svhn_solver.prototxt')
-niter = 20000
-test_interval = 100
+solver = caffe.AdamSolver('svhn_solver.prototxt')
+niter = 30000
+test_interval = 1000
 train_loss = np.zeros(niter)
 test_acc = np.zeros(int(np.ceil(niter / test_interval)))
 
@@ -70,7 +72,7 @@ for it in range(niter):
     solver.test_nets[0].forward()
     if it % test_interval == 0:
         loss = solver.test_nets[0].blobs['loss'].data
-        print 'Iteration', it, 'testing loss is :',loss
+#        print 'Iteration', it, 'testing loss is :',loss
         acc = solver.test_nets[0].blobs['accuracy'].data
         test_acc[it // test_interval] = acc
 #        print 'Iteration', it, 'testing accuracy is :',acc
@@ -119,21 +121,24 @@ plt.ylabel('Test Accuracy Values')
 plt.title('Test Accuracy')
 plt.show()
 
+exec_time_cos = time.time()-start_time_cos
+print(exec_time_cos)
+
 #----------------------------------------------------------------------------------------------
 #------------------------------Plot All Feature maps Functions---------------------------------
-net = solver.net
-f1_0 = net.blobs['conv1'].data[0, :25]
-plt.figure(3)
-vis_square_f(f1_0)
-plt.title('Feature Maps for Conv1')
-plt.show()
-#----------------------------------------------------------------------------------------------
-net = solver.net
-f1_0 = net.blobs['conv2'].data[0, :25]
-plt.figure(4)
-vis_square_f(f1_0)
-plt.title('Feature Maps for Conv2')
-plt.show()
+# net = solver.net
+# f1_0 = net.blobs['conv1'].data[0, :25]
+# plt.figure(3)
+# vis_square_f(f1_0)
+# plt.title('Feature Maps for Conv1')
+# plt.show()
+# #----------------------------------------------------------------------------------------------
+# net = solver.net
+# f1_0 = net.blobs['conv2'].data[0, :25]
+# plt.figure(4)
+# vis_square_f(f1_0)
+# plt.title('Feature Maps for Conv2')
+# plt.show()
 #----------------------------------------------------------------------------------------------
 # net = solver.net
 # f1_0 = net.blobs['conv3'].data[0, :20]
@@ -176,8 +181,8 @@ plt.show()
 # #----------------------------------------------------------------------------------------------
 #---------------------------Print Shape ans Sizes for all Layers--------------------------------
 
-for layer_name, blob in net.blobs.iteritems():
-    print layer_name + '\t' + str(blob.data.shape)
-
-for layer_name, param in net.params.iteritems():
-    print layer_name + '\t' + str(param[0].data.shape), str(param[1].data.shape)
+# for layer_name, blob in net.blobs.iteritems():
+#     print layer_name + '\t' + str(blob.data.shape)
+#
+# for layer_name, param in net.params.iteritems():
+#     print layer_name + '\t' + str(param[0].data.shape), str(param[1].data.shape)
